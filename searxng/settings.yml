@@ -1,0 +1,64 @@
+use_default_settings: true
+server:
+  secret_key: "kjsdhf7823h87*&^@#$JHDFSdkjfhsdf"
+  bind_address: "0.0.0.0"
+  port: 8080
+  image_proxy: true
+  limiter: true
+  public_instance: false
+
+search:
+  safe_search: 0
+  autocomplete: ""
+  default_lang: ""
+  formats:
+    - html
+    - json
+
+outgoing:
+  request_timeout: 10
+
+
+engines:
+  - name: bing
+    engine: bing
+    timeout: 10.0
+    disabled: false
+  - name: yahoo
+    engine: yahoo
+    timeout: 10.0
+    disabled: false
+  - name: qwant
+    engine: qwant
+    timeout: 10.0
+    disabled: false
+  - name: wikipedia
+    engine: wikipedia
+    timeout: 10.0
+    disabled: false
+  - name: duckduckgo
+    engine: duckduckgo
+    timeout: 10.0
+    disabled: true
+  - name: brave
+    engine: brave
+    timeout: 10.0
+    disabled: true
+  - name: google
+    engine: google_html
+    timeout: 10.0
+    disabled: false
+  - name: startpage
+    engine: startpage
+    timeout: 10.0
+    disabled: true
+  - name: wikidata
+    engine: wikidata
+    timeout: 3.0
+    disabled: true # Disabled due to timeouts in logs
+  - name: ahmia
+    disabled: true
+  - name: torch
+    disabled: true
+
+

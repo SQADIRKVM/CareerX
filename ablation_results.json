@@ -1,0 +1,44 @@
+{
+  "timestamp": "2026-04-02T19:57:46.987Z",
+  "comparisons": [
+    {
+      "profile": "CS Student (India)",
+      "llmOnly": {
+        "timeMs": 14142,
+        "pathways": 3,
+        "unis": 3,
+        "jobs": 3,
+        "certs": 3,
+        "sources": 3,
+        "hasCitations": true,
+        "genericPhrases": 0,
+        "salarySpecificity": 100,
+        "totalTextLength": 3441
+      },
+      "fullSystem": {
+        "timeMs": 7603,
+        "sourcesRetrieved": 0
+      }
+    },
+    {
+      "profile": "HR Professional (USA)",
+      "llmOnly": {
+        "timeMs": 6607
+      },
+      "fullSystem": {
+        "timeMs": 6619,
+        "sourcesRetrieved": 0
+      }
+    },
+    {
+      "profile": "High School Student (UAE)",
+      "llmOnly": {
+        "timeMs": 6759
+      },
+      "fullSystem": {
+        "timeMs": 6996,
+        "sourcesRetrieved": 0
+      }
+    }
+  ]
+}
