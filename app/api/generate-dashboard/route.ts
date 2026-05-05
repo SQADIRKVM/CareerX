@@ -4,11 +4,14 @@ import { z } from 'zod';
 import { searchSearxNG } from '@/lib/searxng';
 import { fetchPageContent } from '@/lib/scraper';
 import { DashboardDataSchema } from '@/lib/schemas';
+import { saveReportAction } from '@/app/actions/report';
+import { auth } from '@clerk/nextjs/server';
 
 export const maxDuration = 120; // Allow 120s for deep multi-page research
 
 export async function POST(req: Request) {
     try {
+        const { userId } = await auth();
         const { answers, studentType, userName, location, currency } = await req.json();
 
         // Always compute the current year server-side — never let the AI guess
@@ -194,6 +197,16 @@ ${topSources.map((r, i) => `[${i + 1}] ${r.title}\n   URL: ${r.url}\n   ${(r as 
                 }
             ]
         });
+
+        // ── 4. Save to Neon (Permanent Storage) ─────────────────────────────
+        if (userId) {
+            try {
+                await saveReportAction(dashboard.object);
+                console.log('✅ Report saved to Neon for user:', userId);
+            } catch (saveError) {
+                console.error('❌ Failed to save to Neon:', saveError);
+            }
+        }
 
         return Response.json({
             status: 'complete',

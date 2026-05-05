@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { getLatestReportAction } from '@/app/actions/report';
 
 // ─── helpers ────────────────────────────────────────────────────────
 function Tag({ children }: { children: React.ReactNode }) {
@@ -1110,17 +1111,38 @@ export default function DashboardPage() {
         const controller = new AbortController();
         abortControllerRef.current = controller;
         const fetchDashboardData = async () => {
-            const storedAnswers = localStorage.getItem('questionnaire_answers');
-            const type = localStorage.getItem('student_type');
-            const name = localStorage.getItem('user_name');
-            const location = localStorage.getItem('user_location') || 'Global';
-            const currency = localStorage.getItem('user_currency') || 'USD';
-            if (!storedAnswers || !type) { router.push('/'); return; }
             try {
+                // ── 1. Check Neon DB for existing report ─────────────────────
+                const savedReport = await getLatestReportAction();
+                if (savedReport && !controller.signal.aborted) {
+                    console.log('✅ Found saved report in Neon');
+                    setData(savedReport);
+                    setLoading(false);
+                    return;
+                }
+
+                // ── 2. Fallback to AI generation ───────────────────────────
+                const storedAnswers = localStorage.getItem('questionnaire_answers');
+                const type = localStorage.getItem('student_type');
+                const name = localStorage.getItem('user_name');
+                const location = localStorage.getItem('user_location') || 'Global';
+                const currency = localStorage.getItem('user_currency') || 'USD';
+                
+                if (!storedAnswers || !type) { 
+                    router.push('/'); 
+                    return; 
+                }
+
                 const res = await fetch('/api/generate-dashboard', { 
                     method: 'POST', 
                     headers: { 'Content-Type': 'application/json' }, 
-                    body: JSON.stringify({ answers: JSON.parse(storedAnswers), studentType: type, userName: name, location, currency }),
+                    body: JSON.stringify({ 
+                        answers: JSON.parse(storedAnswers), 
+                        studentType: type, 
+                        userName: name, 
+                        location, 
+                        currency 
+                    }),
                     signal: controller.signal
                 });
                 const result = await res.json();
@@ -1134,6 +1156,7 @@ export default function DashboardPage() {
                 }
             } catch (err: any) { 
                 if (!controller.signal.aborted) {
+                    console.error('Fetch Dashboard Error:', err);
                     setError(true); 
                     setLoading(false);
                 }
