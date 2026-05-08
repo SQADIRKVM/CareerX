@@ -9,7 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Compass, Loader2 } from "lucide-react";
+import { Compass, Loader2, X } from "lucide-react";
 import { authClient } from "@/lib/auth/client";
 
 interface AuthModalProps {
@@ -58,64 +58,73 @@ export function AuthModal({ isOpen, onClose, defaultView = "signin" }: AuthModal
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-md p-0 overflow-hidden border-0 bg-white rounded-3xl">
+      <DialogContent className="sm:max-w-md p-0 overflow-hidden border border-zinc-200 dark:border-white/10 bg-white/95 dark:bg-[#0a0a0a]/95 backdrop-blur-xl rounded-[2.5rem] shadow-2xl relative">
         <DialogTitle className="sr-only">{view === "signin" ? "Sign In" : "Sign Up"}</DialogTitle>
         
-        {/* Background decorations inside modal */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-100 rounded-full blur-[80px] opacity-50 -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-blue-100 rounded-full blur-[60px] opacity-50 translate-y-1/2 -translate-x-1/2 pointer-events-none" />
+        {/* Stunning functional close button */}
+        <button 
+          onClick={onClose} 
+          className="absolute top-6 right-6 w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-900 hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-500 dark:text-zinc-400 flex items-center justify-center transition-all duration-200 z-50 cursor-pointer"
+          aria-label="Close dialog"
+        >
+          <X className="w-4 h-4" />
+        </button>
 
-        <div className="p-8 relative z-10">
+        {/* Background decorations inside modal */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 dark:bg-indigo-500/20 rounded-full blur-[80px] opacity-70 -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-violet-500/10 dark:bg-violet-500/20 rounded-full blur-[60px] opacity-70 translate-y-1/2 -translate-x-1/2 pointer-events-none" />
+
+        <div className="p-8 md:p-10 relative z-10">
           <div className="flex justify-center mb-6">
-            <div className="flex items-center gap-2 group">
-              <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center shadow-indigo-200 shadow-lg">
-                <Compass className="w-6 h-6 text-white" />
+            <div className="flex items-center gap-3 group">
+              <div className="w-12 h-12 rounded-2xl bg-indigo-600 dark:bg-white text-white dark:text-black flex items-center justify-center shadow-lg hover:rotate-6 transition-transform duration-300">
+                <Compass className="w-6 h-6" />
               </div>
-              <span className="text-2xl font-bold tracking-tight text-slate-900">CareerX</span>
+              <span className="text-2xl font-black tracking-tight text-zinc-900 dark:text-white">CareerX</span>
             </div>
           </div>
 
-          <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold text-slate-900 mb-1">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold text-zinc-900 dark:text-white mb-1.5 tracking-tight">
               {view === "signin" ? "Welcome back" : "Create an account"}
             </h2>
-            <p className="text-slate-500 text-sm">
+            <p className="text-zinc-500 dark:text-zinc-400 text-sm font-medium">
               {view === "signin" ? "Sign in to your account to continue" : "Enter your details to get started"}
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-5">
             {view === "signup" && (
               <div className="space-y-1.5">
-                <Label htmlFor="name">Full Name</Label>
+                <Label htmlFor="name" className="text-[10px] font-black text-zinc-500 dark:text-zinc-400 uppercase tracking-wider ml-1">Full Name</Label>
                 <Input 
                   id="name" 
                   name="name" 
                   type="text" 
                   required 
                   placeholder="John Doe"
-                  className="h-11 bg-slate-50"
+                  className="h-12 px-4 rounded-2xl border border-zinc-200 dark:border-white/10 bg-zinc-50/50 dark:bg-zinc-900/30 text-zinc-800 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                 />
               </div>
             )}
 
             <div className="space-y-1.5">
-              <Label htmlFor="email">Email address</Label>
+              <Label htmlFor="email" className="text-[10px] font-black text-zinc-500 dark:text-zinc-400 uppercase tracking-wider ml-1">Email address</Label>
               <Input 
                 id="email" 
                 name="email" 
                 type="email" 
                 required 
                 placeholder="name@example.com"
-                className="h-11 bg-slate-50"
+                className="h-12 px-4 rounded-2xl border border-zinc-200 dark:border-white/10 bg-zinc-50/50 dark:bg-zinc-900/30 text-zinc-800 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
               />
             </div>
 
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password" className="text-[10px] font-black text-zinc-500 dark:text-zinc-400 uppercase tracking-wider ml-1">Password</Label>
                 {view === "signin" && (
-                  <button type="button" className="text-xs text-indigo-600 hover:text-indigo-500 font-medium">
+                  <button type="button" className="text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300 font-semibold hover:underline">
                     Forgot password?
                   </button>
                 )}
@@ -126,32 +135,36 @@ export function AuthModal({ isOpen, onClose, defaultView = "signin" }: AuthModal
                 type="password" 
                 required 
                 placeholder="••••••••"
-                className="h-11 bg-slate-50"
+                className="h-12 px-4 rounded-2xl border border-zinc-200 dark:border-white/10 bg-zinc-50/50 dark:bg-zinc-900/30 text-zinc-800 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
               />
             </div>
 
             {error && (
-              <div className="p-3 bg-rose-50 text-rose-500 text-sm font-medium rounded-lg border border-rose-100">
+              <div className="p-3.5 bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 text-sm font-bold rounded-2xl border border-rose-100 dark:border-rose-500/20">
                 {error}
               </div>
             )}
 
-            <Button type="submit" disabled={isPending} className="w-full h-11 text-base font-semibold mt-2">
+            <Button 
+              type="submit" 
+              disabled={isPending} 
+              className="w-full h-12 rounded-2xl font-bold bg-indigo-600 hover:bg-indigo-700 dark:bg-white dark:text-black dark:hover:bg-zinc-100 text-white shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer flex items-center justify-center gap-2"
+            >
               {isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : (view === "signin" ? "Sign In" : "Create Account")}
             </Button>
           </form>
 
           <div className="mt-6 flex items-center gap-3">
-            <div className="h-px flex-1 bg-slate-200" />
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Or continue with</span>
-            <div className="h-px flex-1 bg-slate-200" />
+            <div className="h-px flex-1 bg-zinc-200 dark:bg-white/10" />
+            <span className="text-[10px] font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">Or continue with</span>
+            <div className="h-px flex-1 bg-zinc-200 dark:bg-white/10" />
           </div>
 
           <div className="mt-6">
             <Button 
               type="button"
               variant="outline"
-              className="w-full h-11 text-base font-medium flex items-center justify-center gap-2 hover:bg-slate-50"
+              className="w-full h-12 rounded-2xl font-bold border border-zinc-200 dark:border-white/10 bg-white dark:bg-zinc-900/20 text-zinc-800 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-900/40 transition-all duration-200 cursor-pointer flex items-center justify-center gap-2.5"
               onClick={() => authClient.signIn.social({ provider: 'google' })}
             >
               <svg viewBox="0 0 24 24" className="w-5 h-5" aria-hidden="true">
@@ -164,12 +177,12 @@ export function AuthModal({ isOpen, onClose, defaultView = "signin" }: AuthModal
             </Button>
           </div>
 
-          <p className="mt-6 text-center text-sm text-slate-500">
+          <p className="mt-8 text-center text-sm font-medium text-zinc-500 dark:text-zinc-400">
             {view === "signin" ? "Don't have an account? " : "Already have an account? "}
             <button 
               type="button" 
               onClick={() => setView(view === "signin" ? "signup" : "signin")}
-              className="text-indigo-600 hover:text-indigo-500 font-semibold"
+              className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300 font-bold hover:underline"
             >
               {view === "signin" ? "Create one" : "Sign in"}
             </button>
