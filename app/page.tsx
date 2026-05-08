@@ -166,7 +166,7 @@ export default function LandingPage() {
               className="text-5xl md:text-7xl lg:text-[6.5rem] font-semibold tracking-tighter mb-8 text-zinc-900 dark:text-white leading-[1.05]"
             >
               Stop guessing your <br/>
-              <span className="text-indigo-600 dark:text-indigo-400 font-extrabold">career path.</span>
+              <span className="text-zinc-400 dark:text-zinc-500">career path.</span>
             </motion.h1>
 
             <motion.p 
@@ -198,13 +198,15 @@ export default function LandingPage() {
                 </Link>
               )}
               <Link href="/dashboard?example=true">
-                <Button variant="outline" className="h-14 px-10 rounded-full font-medium text-base border-zinc-200 dark:border-white/10 text-zinc-900 dark:text-white bg-zinc-50 dark:bg-white/5 hover:bg-zinc-100 dark:hover:bg-white/10 backdrop-blur-md transition-all flex items-center justify-center gap-2">
+                <Button variant="outline" className="h-14 px-10 rounded-full font-medium text-base border-zinc-200 dark:border-white/10 text-zinc-900 dark:text-white bg-white/50 dark:bg-white/5 hover:bg-zinc-100 dark:hover:bg-white/10 backdrop-blur-md transition-all flex items-center justify-center gap-2">
                   <PlayCircle className="w-5 h-5 text-zinc-400" />
                   View an Example
                 </Button>
               </Link>
             </motion.div>
           </div>
+          
+          <div className="absolute bottom-0 w-full h-48 bg-gradient-to-t from-white dark:from-[#050505] to-transparent pointer-events-none" />
         </motion.section>
 
         {/* Who is this for? */}
@@ -368,13 +370,13 @@ export default function LandingPage() {
                     Your assessment, upload assets, and personal details remain completely secure. We leverage secure database storage to track and persist only your authorized learning hubs and milestone progress. You remain in complete control.
                   </p>
                 </div>
-                <div className="w-full md:w-2/5 aspect-video bg-black/60 rounded-3xl border border-white/10 flex flex-col items-center justify-center shadow-2xl relative overflow-hidden group">
+                <div className="w-full md:w-2/5 aspect-video bg-zinc-100 dark:bg-black/60 rounded-3xl border border-zinc-200 dark:border-white/10 flex flex-col items-center justify-center shadow-2xl relative overflow-hidden group">
                    <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                    <div className="absolute inset-x-0 h-px top-0 bg-gradient-to-r from-transparent via-violet-500/20 to-transparent" />
                    <div className="w-12 h-12 rounded-full bg-violet-500/10 border border-violet-500/30 flex items-center justify-center mb-3 animate-pulse relative">
-                     <Lock className="w-5 h-5 text-violet-400" />
+                     <Lock className="w-5 h-5 text-violet-500 dark:text-violet-400" />
                    </div>
-                   <span className="text-xs font-mono text-zinc-500 group-hover:text-violet-300 transition-colors tracking-wide">Secure Session Encryption</span>
+                   <span className="text-xs font-mono text-zinc-500 dark:text-zinc-400 group-hover:text-violet-600 dark:group-hover:text-violet-300 transition-colors tracking-wide">Secure Session Encryption</span>
                 </div>
               </GlowCard>
             </div>
@@ -432,28 +434,28 @@ export default function LandingPage() {
                 </div>
                 
                 <div className="p-8 space-y-6 font-mono text-xs text-zinc-400">
-                  <div className="flex justify-between items-center p-4 rounded-2xl bg-white/[0.01] border border-white/5 hover:border-white/10 transition-all duration-300">
+                  <div className="flex justify-between items-center p-4 rounded-2xl bg-white/[0.02] border border-white/10 hover:border-white/20 transition-all duration-300">
                     <div className="flex items-center gap-3">
                       <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                       <span>Searching online job boards...</span>
                     </div>
                     <span className="text-emerald-400 font-semibold bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">SUCCESS</span>
                   </div>
-                  <div className="flex justify-between items-center p-4 rounded-2xl bg-white/[0.01] border border-white/5 hover:border-white/10 transition-all duration-300">
+                  <div className="flex justify-between items-center p-4 rounded-2xl bg-white/[0.02] border border-white/10 hover:border-white/20 transition-all duration-300">
                     <div className="flex items-center gap-3">
                       <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                       <span>Processing live RAG documents...</span>
                     </div>
                     <span className="text-emerald-400 font-semibold bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">DONE</span>
                   </div>
-                  <div className="flex justify-between items-center p-4 rounded-2xl bg-white/[0.01] border border-white/5 hover:border-white/10 transition-all duration-300">
+                  <div className="flex justify-between items-center p-4 rounded-2xl bg-white/[0.02] border border-white/10 hover:border-white/20 transition-all duration-300">
                     <div className="flex items-center gap-3">
                       <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                       <span>Parsing university catalogs...</span>
                     </div>
                     <span className="text-emerald-400 font-semibold bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">COMPILED</span>
                   </div>
-                  <div className="flex justify-between items-center p-4 rounded-2xl bg-white/[0.01] border border-white/5 hover:border-white/10 transition-all duration-300">
+                  <div className="flex justify-between items-center p-4 rounded-2xl bg-white/[0.02] border border-white/10 hover:border-white/20 transition-all duration-300">
                     <div className="flex items-center gap-3">
                       <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                       <span>Synthesizing roadmap nodes...</span>
