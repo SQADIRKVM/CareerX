@@ -72,7 +72,8 @@ RULES:
         const BANNED_DOMAINS = [
             'dictionary.com', 'merriam-webster.com', 'thesaurus.com', 
             'oxfordlearnersdictionaries.com', 'cambridge.org', 'wiktionary.org',
-            'collinsdictionary.com', 'definitions.net', 'vocabulary.com', 'wordsmyth.net'
+            'collinsdictionary.com', 'definitions.net', 'vocabulary.com', 'wordsmyth.net',
+            'ell.stackexchange.com', 'english.stackexchange.com', 'cppreference.com', 'stackoverflow.com'
         ];
 
         const seenUrls = new Set<string>();

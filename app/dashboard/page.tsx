@@ -8,12 +8,14 @@ import {
     CheckCircle2, ArrowRight, ArrowLeft, Compass, Sparkles, RotateCcw,
     Bot, User, AlertTriangle, ExternalLink, Network,
     BookOpen, Award, Search, ShieldCheck,
-    Link2, FileText, LineChart, ArrowUp, X, Zap, Globe, Download
+    Link2, FileText, LineChart, ArrowUp, X, Zap, Globe, Download, Plus
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { getLatestReportAction } from '@/app/actions/report';
+import { getLatestReportAction, getAllReportsAction, updateReportMilestonesAction, deleteAllUserReportsAction } from '@/app/actions/report';
+import { addCourseAction, getTrackedCoursesAction } from '@/app/actions/trackedCourse';
 import { UserAccountNav } from '@/components/shared/UserAccountNav';
+import { LearningHub } from '@/components/dashboard/LearningHub';
 
 // ─── helpers ────────────────────────────────────────────────────────
 
@@ -85,6 +87,139 @@ function marketDemandSummary(text: string) {
     if (/stable|steady/i.test(cleaned)) return 'Stable demand with steady hiring.';
     if (/declin|low|limited/i.test(cleaned)) return 'Selective demand; niche positioning matters.';
     return compactText(cleaned, 56);
+}
+
+interface PivotResult {
+    compatibilityScore: number;
+    transferableSkills: string[];
+    newSkillsNeeded: string[];
+    transitionPlan: Array<{
+        phase: string;
+        timeline: string;
+        actions: string[];
+    }>;
+}
+
+function PivotSandbox({ currentPath }: { currentPath: string }) {
+    const [targetRole, setTargetRole] = useState('');
+    const [simulating, setSimulating] = useState(false);
+    const [result, setResult] = useState<PivotResult | null>(null);
+
+    const handleSimulate = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!targetRole.trim()) return;
+        setSimulating(true);
+        try {
+            const res = await fetch('/api/simulate-pivot', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ currentPath, targetRole })
+            });
+            const data = await res.json();
+            if (data.success) {
+                setResult(data);
+            } else {
+                toast("Pivot simulation failed. Please try again.", "error");
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setSimulating(false);
+        }
+    };
+
+    return (
+        <div className="rounded-2xl border border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-zinc-900/20 p-6 md:p-8 shadow-sm mb-10 space-y-8">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-wider mb-2">Sandbox Mode</div>
+                    <h3 className="text-xl font-bold text-slate-800 dark:text-white">Interactive Career Pivot Simulator</h3>
+                    <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1">Calculate transferable skills and bridge gaps to any alternative career target instantly.</p>
+                </div>
+                <form onSubmit={handleSimulate} className="flex gap-2.5 shrink-0 max-w-md w-full">
+                    <input 
+                        type="text"
+                        value={targetRole}
+                        onChange={(e) => setTargetRole(e.target.value)}
+                        placeholder="e.g. DevOps Engineer or Product Manager"
+                        className="flex-1 h-11 px-4 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-black/35 text-slate-800 dark:text-white text-xs focus:outline-none focus:border-indigo-500"
+                    />
+                    <button
+                        type="submit"
+                        disabled={simulating || !targetRole.trim()}
+                        className="h-11 px-5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md transition-all disabled:opacity-50 flex items-center justify-center gap-1.5 cursor-pointer"
+                    >
+                        {simulating ? (
+                            <>
+                                <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                Analyzing...
+                            </>
+                        ) : (
+                            <>
+                                <Sparkles className="w-3.5 h-3.5" />
+                                Simulate Pivot
+                            </>
+                        )}
+                    </button>
+                </form>
+            </div>
+
+            {result && (
+                <div className="grid md:grid-cols-3 gap-8 p-6 rounded-2xl bg-white dark:bg-zinc-950/40 border border-slate-200 dark:border-white/5 shadow-inner animate-in fade-in duration-500">
+                    <div className="md:col-span-1 flex flex-col items-center justify-center text-center p-6 border-b md:border-b-0 md:border-r border-slate-200 dark:border-white/5">
+                        <div className="relative flex items-center justify-center mb-4">
+                            <svg className="w-32 h-32 transform -rotate-90">
+                                <circle cx="64" cy="64" r="54" fill="transparent" stroke="currentColor" strokeWidth="8" className="text-slate-100 dark:text-white/5" />
+                                <circle cx="64" cy="64" r="54" fill="transparent" stroke="currentColor" strokeWidth="8" strokeDasharray={339.3} strokeDashoffset={339.3 - (339.3 * result.compatibilityScore) / 100} className="text-indigo-500" strokeLinecap="round" />
+                            </svg>
+                            <div className="absolute text-3xl font-black text-slate-800 dark:text-white">{result.compatibilityScore}%</div>
+                        </div>
+                        <h4 className="text-sm font-bold text-slate-800 dark:text-white uppercase tracking-wider">Transferability Match</h4>
+                    </div>
+
+                    <div className="md:col-span-2 space-y-6">
+                        <div className="grid sm:grid-cols-2 gap-6">
+                            <div>
+                                <p className="text-[10px] font-black text-emerald-500 uppercase tracking-widest mb-3">Transferable Skills</p>
+                                <div className="flex flex-wrap gap-2">
+                                    {result.transferableSkills.map((s, i) => (
+                                        <span key={i} className="px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold text-xs">{s}</span>
+                                    ))}
+                                </div>
+                            </div>
+                            <div>
+                                <p className="text-[10px] font-black text-indigo-500 uppercase tracking-widest mb-3">New Required Skills</p>
+                                <div className="flex flex-wrap gap-2">
+                                    {result.newSkillsNeeded.map((s, i) => (
+                                        <span key={i} className="px-3 py-1.5 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-600 dark:text-indigo-400 font-bold text-xs">{s}</span>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="space-y-4">
+                            <p className="text-[10px] font-black text-slate-400 dark:text-zinc-500 uppercase tracking-widest">3-Year Strategic Transition Path</p>
+                            <div className="grid sm:grid-cols-3 gap-4">
+                                {result.transitionPlan.map((p, i) => (
+                                    <div key={i} className="p-4 rounded-xl border border-slate-200 dark:border-white/5 bg-slate-100/50 dark:bg-black/25">
+                                        <div className="flex items-center justify-between gap-2 mb-2">
+                                            <p className="text-[10px] font-black uppercase text-indigo-500">{p.timeline}</p>
+                                        </div>
+                                        <h5 className="text-xs font-black text-slate-800 dark:text-white mb-2 leading-tight">{p.phase}</h5>
+                                        <ul className="space-y-1.5">
+                                            {p.actions.map((act, j) => (
+                                                <li key={j} className="text-[10px] text-slate-500 dark:text-zinc-400 font-semibold leading-snug">• {act}</li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
 }
 
 
@@ -443,7 +578,7 @@ function JobsSection({ data }: { data: DashboardData }) {
     );
 }
 
-function SkillsSection({ data }: { data: DashboardData }) {
+function SkillsSection({ data, completedMilestones = [], onToggleMilestone, trackedUrls = [], onAddTrackedUrl }: { data: DashboardData; completedMilestones?: string[]; onToggleMilestone?: (id: string) => void; trackedUrls?: string[]; onAddTrackedUrl?: (url: string) => void }) {
     const skill = data.skillGaps;
     if (!skill || (!skill.currentSkills?.length && !skill.neededSkills?.length)) 
         return <EmptyState title="Capability Hub" message="No intelligence mapping available for current skills." icon={Target} />;
@@ -487,20 +622,69 @@ function SkillsSection({ data }: { data: DashboardData }) {
             
             {skill.roadmap?.length > 0 && (
                 <div className="pt-8">
-                    <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-12 tracking-tight flex items-center gap-4 group cursor-default">
+                    <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-6 tracking-tight flex items-center gap-4 group cursor-default">
                         <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-white text-slate-800 dark:text-black flex items-center justify-center shrink-0 group-hover:rotate-6 transition-transform shadow-[0_0_25px_rgba(255,255,255,0.1)]">
                             <TrendingUp className="w-5 h-5" />
                         </div>
                         Strategic Capability Roadmap
                     </h2>
+
+                    {/* Interactive Completion Progress Bar */}
+                    {onToggleMilestone && (
+                        <div className="mb-12 p-6 bg-slate-100/50 dark:bg-zinc-900/30 border border-slate-200 dark:border-white/5 rounded-2xl shadow-sm">
+                            <div className="flex justify-between items-center text-xs font-bold text-slate-500 dark:text-zinc-400 mb-2.5">
+                                <span>Roadmap Execution Progress</span>
+                                <span className="text-indigo-600 dark:text-indigo-400">
+                                    {Math.round((completedMilestones.filter(m => skill.roadmap.some(r => `${r.year}-${r.title}` === m)).length / skill.roadmap.length) * 100)}%
+                                </span>
+                            </div>
+                            <div className="h-2 rounded-full bg-slate-200 dark:bg-white/10 overflow-hidden">
+                                <div 
+                                    className="h-full bg-indigo-500 rounded-full transition-all duration-500" 
+                                    style={{ 
+                                        width: `${(completedMilestones.filter(m => skill.roadmap.some(r => `${r.year}-${r.title}` === m)).length / skill.roadmap.length) * 100}%` 
+                                    }} 
+                                />
+                            </div>
+                        </div>
+                    )}
+
                     <div className="relative pl-10 border-l-2 border-indigo-500/20 space-y-16 ml-4">
                         {skill.roadmap.map((m, i) => (
                             <motion.div key={i} initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1 }} className="relative">
-                                <div className="absolute -left-[51px] top-1.5 w-5 h-5 rounded-full bg-slate-50 dark:bg-black border-4 border-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.5)]" />
+                                <div className={`absolute -left-[51px] top-1.5 w-5 h-5 rounded-full border-4 shadow-sm transition-all duration-300 ${
+                                    completedMilestones.includes(`${m.year}-${m.title}`)
+                                        ? 'bg-emerald-500 border-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.5)]'
+                                        : 'bg-slate-50 dark:bg-black border-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.5)]'
+                                }`} />
                                 <div className="bg-slate-50 dark:bg-zinc-900/40 border border-slate-200 dark:border-white/5 rounded-[2.5rem] p-10 shadow-lg hover:border-slate-300 dark:hover:border-white/10 transition-all">
-                                    <div className="flex items-center gap-6 mb-10">
-                                        <span className="inline-flex px-4 py-1.5 bg-indigo-500/10 border border-indigo-500/20 text-indigo-600 dark:text-indigo-400 text-[10px] font-black rounded-full uppercase tracking-wider">{m.year}</span>
-                                        <h4 className="text-xl font-bold text-slate-800 dark:text-white tracking-tight">{m.title}</h4>
+                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-10">
+                                        <div className="flex items-center gap-6">
+                                            <span className="inline-flex px-4 py-1.5 bg-indigo-500/10 border border-indigo-500/20 text-indigo-600 dark:text-indigo-400 text-[10px] font-black rounded-full uppercase tracking-wider">{m.year}</span>
+                                            <h4 className="text-xl font-bold text-slate-800 dark:text-white tracking-tight">{m.title}</h4>
+                                        </div>
+                                        {onToggleMilestone && (
+                                            <button 
+                                                onClick={() => onToggleMilestone(`${m.year}-${m.title}`)}
+                                                className={`flex items-center gap-2.5 h-10 px-4 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+                                                    completedMilestones.includes(`${m.year}-${m.title}`)
+                                                        ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/25 shadow-sm'
+                                                        : 'bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-zinc-400 border-slate-200 dark:border-white/5 hover:text-slate-800 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/10'
+                                                }`}
+                                            >
+                                                {completedMilestones.includes(`${m.year}-${m.title}`) ? (
+                                                    <>
+                                                        <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                                                        Completed
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <div className="w-4 h-4 rounded-full border-2 border-slate-300 dark:border-zinc-700" />
+                                                        Mark Done
+                                                    </>
+                                                )}
+                                            </button>
+                                        )}
                                     </div>
                                     <div className="grid lg:grid-cols-2 gap-8">
                                         <div className="p-8 bg-slate-100 dark:bg-[#0c0c0c] rounded-[2rem] border border-slate-200 dark:border-white/5">
@@ -526,14 +710,48 @@ function SkillsSection({ data }: { data: DashboardData }) {
                                         </div>
                                     </div>
                                     {m.resourceLinks?.length && (
-                                        <div className="mt-10 pt-8 border-t border-white/5 flex flex-wrap items-center gap-6">
-                                            <p className="text-[10px] font-black text-zinc-500 uppercase tracking-wider">Recommended Training Assets:</p>
-                                            <div className="flex flex-wrap gap-2.5">
+                                        <div className="mt-10 pt-8 border-t border-white/5 flex flex-col sm:flex-row sm:items-center gap-6">
+                                            <p className="text-[10px] font-black text-zinc-500 uppercase tracking-wider shrink-0">Recommended Training Assets:</p>
+                                            <div className="flex flex-wrap gap-4">
                                                 {m.resourceLinks.map((r, j) => (
-                                                    <a key={j} href={r.url} target="_blank" rel="noopener noreferrer"
-                                                        className="inline-flex items-center gap-2.5 h-10 px-5 bg-white hover:bg-zinc-200 text-black rounded-xl text-xs font-bold transition-all shadow-lg cursor-pointer">
-                                                        <ExternalLink className="w-3.5 h-3.5" /> {r.label}
-                                                    </a>
+                                                    <div key={j} className="flex items-center gap-2">
+                                                        <a href={r.url} target="_blank" rel="noopener noreferrer"
+                                                            className="inline-flex items-center gap-2.5 h-10 px-5 bg-white hover:bg-zinc-200 text-black rounded-xl text-xs font-bold transition-all shadow-lg cursor-pointer">
+                                                            <ExternalLink className="w-3.5 h-3.5" /> {r.label}
+                                                        </a>
+                                                        {trackedUrls.includes(r.url) ? (
+                                                            <div className="h-10 px-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 cursor-default select-none">
+                                                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> Tracked
+                                                            </div>
+                                                        ) : (
+                                                            <button
+                                                                onClick={async () => {
+                                                                    const platform = r.url.toLowerCase().includes('youtube') 
+                                                                        ? 'youtube' 
+                                                                        : r.url.toLowerCase().includes('udemy') 
+                                                                        ? 'udemy' 
+                                                                        : r.url.toLowerCase().includes('coursera') 
+                                                                        ? 'coursera' 
+                                                                        : 'other';
+                                                                    try {
+                                                                        const res = await addCourseAction(r.label, platform, r.url);
+                                                                        if (res.success) {
+                                                                            toast(`"${r.label}" has been added to My Learning Hub! Set schedules, watch study videos, and track progress there.`, "success");
+                                                                            if (onAddTrackedUrl) onAddTrackedUrl(r.url);
+                                                                        } else {
+                                                                            toast(res.error || "Failed to add course", "error");
+                                                                        }
+                                                                    } catch (err) {
+                                                                        console.error(err);
+                                                                    }
+                                                                }}
+                                                                className="h-10 px-3 bg-indigo-500/10 hover:bg-indigo-500 text-indigo-600 dark:text-indigo-400 hover:text-white border border-indigo-500/20 rounded-xl text-xs font-bold flex items-center justify-center gap-1 cursor-pointer transition-all active:scale-95"
+                                                                title="Track this course in My Learning Hub"
+                                                            >
+                                                                <Plus className="w-3.5 h-3.5" /> Track
+                                                            </button>
+                                                        )}
+                                                    </div>
                                                 ))}
                                             </div>
                                         </div>
@@ -840,6 +1058,31 @@ function AtsScannerSection({ data }: { data: DashboardData }) {
     const [selectedJob, setSelectedJob] = useState(data.jobs?.[0]?.role ?? '');
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState<{ matchScore: number; feedback: string; missingKeywords: string[] } | null>(null);
+    const [optimizing, setOptimizing] = useState(false);
+    const [optimizedResult, setOptimizedResult] = useState<{ optimizedResume: string; changesMade: string[] } | null>(null);
+
+    const handleOptimize = async () => {
+        if (!resume.trim() || !result) return;
+        setOptimizing(true);
+        try {
+            const res = await fetch('/api/optimize-resume', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ resumeContent: resume, missingKeywords: result.missingKeywords })
+            });
+            const output = await res.json();
+            if (output.success) {
+                setOptimizedResult(output);
+            } else {
+                toast("Optimization failed. Please try again.", "error");
+            }
+        } catch (e) {
+            console.error(e);
+            toast("Optimizer error. Please try again.", "error");
+        } finally {
+            setOptimizing(false);
+        }
+    };
 
     const handleScan = async () => {
         if (!resume.trim() || !selectedJob) return;
@@ -855,7 +1098,7 @@ function AtsScannerSection({ data }: { data: DashboardData }) {
             setResult(output);
         } catch (e) {
             console.error(e);
-            alert("Scanner failure. System reset recommended.");
+            toast("Scanner failure. System reset recommended.", "error");
         } finally {
             setLoading(false);
         }
@@ -906,7 +1149,54 @@ function AtsScannerSection({ data }: { data: DashboardData }) {
 
             {/* Result Side */}
             <div className="p-10 lg:w-1/2 bg-slate-50 dark:bg-[#0c0c0c]/40 backdrop-blur-xl flex flex-col relative group">
-                {!result && !loading ? (
+                {optimizedResult ? (
+                    <div className="space-y-8 w-full animate-in fade-in duration-500 flex flex-col h-full">
+                        <div className="flex items-center justify-between">
+                            <h4 className="text-lg font-black text-slate-800 dark:text-white">AI-Optimized Resume Diff</h4>
+                            <button 
+                                onClick={() => setOptimizedResult(null)}
+                                className="text-xs font-bold text-slate-500 hover:text-slate-800 dark:hover:text-white cursor-pointer"
+                            >
+                                ← Back to Feedback
+                            </button>
+                        </div>
+
+                        <div className="p-6 bg-emerald-500/10 border border-emerald-500/25 rounded-2xl">
+                            <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 mb-3">Changes Made by AI:</p>
+                            <ul className="list-disc pl-5 text-xs text-slate-600 dark:text-zinc-300 space-y-1 font-semibold">
+                                {optimizedResult.changesMade.map((c, i) => (
+                                    <li key={i}>{c}</li>
+                                ))}
+                            </ul>
+                        </div>
+
+                        <div className="grid md:grid-cols-2 gap-6 flex-1">
+                            <div className="flex flex-col h-64 md:h-auto">
+                                <p className="text-[10px] font-black text-slate-400 dark:text-zinc-500 uppercase tracking-widest mb-3">Original</p>
+                                <div className="flex-1 p-5 rounded-xl border border-slate-200 dark:border-white/5 bg-slate-100/50 dark:bg-black/35 text-xs text-slate-500 dark:text-zinc-400 overflow-y-auto font-mono whitespace-pre-wrap">
+                                    {resume}
+                                </div>
+                            </div>
+                            <div className="flex flex-col h-64 md:h-auto">
+                                <div className="flex justify-between items-center mb-3">
+                                    <p className="text-[10px] font-black text-indigo-500 uppercase tracking-widest">Optimized (ATS Approved)</p>
+                                    <button
+                                        onClick={() => {
+                                            navigator.clipboard.writeText(optimizedResult.optimizedResume);
+                                            toast("Optimized resume copied to clipboard!", "success");
+                                        }}
+                                        className="text-[10px] font-black text-indigo-600 dark:text-indigo-400 hover:underline cursor-pointer"
+                                    >
+                                        Copy to Clipboard
+                                    </button>
+                                </div>
+                                <div className="flex-1 p-5 rounded-xl border border-indigo-500/30 bg-slate-100/50 dark:bg-black/35 text-xs text-slate-800 dark:text-white overflow-y-auto font-mono whitespace-pre-wrap">
+                                    {optimizedResult.optimizedResume}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                ) : !result && !loading ? (
                     <div className="flex-1 flex flex-col items-center justify-center text-center px-12 border-2 border-dashed border-slate-200 dark:border-white/5 rounded-[2.5rem] transition-colors group-hover:border-slate-300 dark:group-hover:border-white/10">
                         <div className="w-16 h-16 rounded-[1.5rem] bg-slate-100 dark:bg-zinc-900/60 border border-slate-200 dark:border-white/5 flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
                             <LineChart className="w-8 h-8 text-slate-400 dark:text-zinc-600 animate-pulse" />
@@ -944,10 +1234,22 @@ function AtsScannerSection({ data }: { data: DashboardData }) {
                         </div>
 
                         <div className="space-y-6">
-                            <h4 className="text-[10px] font-black text-slate-400 dark:text-zinc-500 uppercase tracking-wider flex items-center gap-3">
-                                <div className="w-6 h-6 rounded-full bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-white/5 flex items-center justify-center"><ArrowRight className="w-3.5 h-3.5" /></div>
-                                Optimization Gaps
-                            </h4>
+                            <div className="flex items-center justify-between gap-4">
+                                <h4 className="text-[10px] font-black text-slate-400 dark:text-zinc-500 uppercase tracking-wider flex items-center gap-3">
+                                    <div className="w-6 h-6 rounded-full bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-white/5 flex items-center justify-center"><ArrowRight className="w-3.5 h-3.5" /></div>
+                                    Optimization Gaps
+                                </h4>
+                                {result.missingKeywords.length > 0 && (
+                                    <button
+                                        onClick={handleOptimize}
+                                        disabled={optimizing}
+                                        className="h-9 px-4 rounded-lg bg-indigo-500 text-white font-bold text-[10px] uppercase tracking-wider shadow-md flex items-center justify-center gap-2 transition-all hover:bg-indigo-600 disabled:opacity-50 cursor-pointer"
+                                    >
+                                        <Sparkles className="w-3.5 h-3.5" />
+                                        {optimizing ? 'Optimizing...' : '⚡ Auto-Optimize'}
+                                    </button>
+                                )}
+                            </div>
                             {result.missingKeywords.length > 0 ? (
                                 <div className="flex flex-wrap gap-2.5">
                                     {result.missingKeywords.map((k, i) => (
@@ -1043,8 +1345,40 @@ function LoadingScreen({ onStop }: { onStop: () => void }) {
 // ─── Main Page ────────────────────────────────────────────────────────
 import { useOnboardingStore } from '@/lib/store';
 
+function toast(message: string, type: 'success' | 'error' | 'info' = 'success') {
+    if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('toast', { detail: { message, type } }));
+    }
+}
+
+interface ToastItem {
+    id: string;
+    message: string;
+    type: 'success' | 'error' | 'info';
+}
+
 export default function DashboardPage() {
     const router = useRouter();
+    const [toasts, setToasts] = useState<ToastItem[]>([]);
+
+    const addToast = (message: string, type: 'success' | 'error' | 'info' = 'success') => {
+        const id = Math.random().toString(36).slice(2);
+        setToasts((prev) => [...prev, { id, message, type }]);
+        setTimeout(() => {
+            setToasts((prev) => prev.filter((t) => t.id !== id));
+        }, 4000);
+    };
+
+    useEffect(() => {
+        const handleToastEvent = (e: Event) => {
+            const customEvent = e as CustomEvent<{ message: string; type?: 'success' | 'error' | 'info' }>;
+            if (customEvent.detail?.message) {
+                addToast(customEvent.detail.message, customEvent.detail.type || 'success');
+            }
+        };
+        window.addEventListener('toast', handleToastEvent);
+        return () => window.removeEventListener('toast', handleToastEvent);
+    }, []);
     
     // Read from Zustand store
     const storeAnswers = useOnboardingStore(state => state.questionnaireAnswers);
@@ -1061,7 +1395,21 @@ export default function DashboardPage() {
     const [plannedPathway, setPlannedPathway] = useState<NonNullable<DashboardData['careerPathways']>[number] | null>(null);
 
     const [topTab, setTopTab] = useState<'identity' | 'explore' | 'advisor'>('explore');
-    const [reportTab, setReportTab] = useState<'roadmap' | 'jobs' | 'network' | 'ats'>('roadmap');
+    const [reportTab, setReportTab] = useState<'roadmap' | 'jobs' | 'network' | 'ats' | 'learning'>('roadmap');
+    const [reportId, setReportId] = useState<string | null>(null);
+    const [trackedUrls, setTrackedUrls] = useState<string[]>([]);
+
+    useEffect(() => {
+        async function fetchTracked() {
+            try {
+                const list = await getTrackedCoursesAction();
+                setTrackedUrls(list.map((c: any) => c.url).filter((u: any) => !!u));
+            } catch (err) {
+                console.error(err);
+            }
+        }
+        fetchTracked();
+    }, []);
 
     useEffect(() => {
         const controller = new AbortController();
@@ -1069,10 +1417,11 @@ export default function DashboardPage() {
         const fetchDashboardData = async () => {
             try {
                 // ── 1. Check Neon DB for existing report ─────────────────────
-                const savedReport = await getLatestReportAction();
-                if (savedReport && !controller.signal.aborted) {
+                const reports = await getAllReportsAction();
+                if (reports.length > 0 && !controller.signal.aborted) {
                     console.log('✅ Found saved report in Neon');
-                    setData(savedReport as DashboardData);
+                    setReportId(reports[0].id);
+                    setData(reports[0].data as DashboardData);
                     setLoading(false);
                     return;
                 }
@@ -1141,6 +1490,30 @@ export default function DashboardPage() {
         }, 80);
     };
 
+    const handleToggleMilestone = async (milestoneId: string) => {
+        if (!data || !reportId) return;
+
+        const currentMilestones = (data as any).completedMilestones || [];
+        const isCompleted = currentMilestones.includes(milestoneId);
+        
+        const updatedMilestones = isCompleted
+            ? currentMilestones.filter((id: string) => id !== milestoneId)
+            : [...currentMilestones, milestoneId];
+
+        const updatedData = {
+            ...data,
+            completedMilestones: updatedMilestones,
+        };
+
+        setData(updatedData);
+
+        try {
+            await updateReportMilestonesAction(reportId, updatedMilestones);
+        } catch (err) {
+            console.error("Failed to update milestone in database:", err);
+        }
+    };
+
     const detectedCat = useMemo(() => {
         const raw = storeType ?? '';
         const t = raw.toLowerCase();
@@ -1199,7 +1572,17 @@ export default function DashboardPage() {
                     </div>
 
                     <div className="flex items-center gap-3">
-                        <button onClick={() => router.push('/questionnaire')} className="hidden items-center gap-2 rounded-lg border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-zinc-900 px-4 py-2 text-xs font-bold text-slate-600 dark:text-zinc-300 transition-colors hover:bg-slate-200 dark:hover:bg-zinc-800 md:flex">
+                        <button 
+                            onClick={async () => {
+                                try {
+                                    await deleteAllUserReportsAction();
+                                    router.push('/questionnaire');
+                                } catch (err) {
+                                    console.error(err);
+                                }
+                            }} 
+                            className="hidden items-center gap-2 rounded-lg border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-zinc-900 px-4 py-2 text-xs font-bold text-slate-600 dark:text-zinc-300 transition-colors hover:bg-slate-200 dark:hover:bg-zinc-800 md:flex cursor-pointer"
+                        >
                             <RotateCcw className="h-3.5 w-3.5" />
                             Reset
                         </button>
@@ -1309,6 +1692,7 @@ export default function DashboardPage() {
                                         <p className="text-sm font-medium text-slate-500 dark:text-zinc-400">Ranked opportunities with salary, skill, and source context.</p>
                                     </div>
                                 </div>
+                                <PivotSandbox currentPath={plannedPathway?.title || data.careerPathways?.[0]?.title || ''} />
                                 <VisualExplorer data={data} onNodeClick={setSelectedPathway} />
                             </motion.div>
                         )}
@@ -1323,6 +1707,7 @@ export default function DashboardPage() {
                                             { id: 'jobs' as const, label: 'Job Analytics', icon: Briefcase },
                                             { id: 'network' as const, label: 'Global Network', icon: GraduationCap },
                                             { id: 'ats' as const, label: 'ATS Intelligence', icon: FileText },
+                                            { id: 'learning' as const, label: 'My Learning Hub', icon: BookOpen },
                                         ].map(st => {
                                             const Icon = st.icon;
                                             const active = reportTab === st.id;
@@ -1376,7 +1761,13 @@ export default function DashboardPage() {
                                                         </div>
                                                     </div>
                                                 )}
-                                                <SkillsSection data={data} />
+                                                <SkillsSection 
+                                                    data={data} 
+                                                    completedMilestones={(data as any)?.completedMilestones || []} 
+                                                    onToggleMilestone={handleToggleMilestone} 
+                                                    trackedUrls={trackedUrls}
+                                                    onAddTrackedUrl={(url) => setTrackedUrls(prev => [...prev, url])}
+                                                />
                                                 <div className="mt-16">
                                                     <EducationSection data={data} />
                                                 </div>
@@ -1432,6 +1823,18 @@ export default function DashboardPage() {
                                             </section>
                                         </motion.div>
                                     )}
+
+                                    {reportTab === 'learning' && (
+                                        <motion.div key="learning" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 14 }} transition={{ duration: 0.3 }}>
+                                            <section id="learning">
+                                                <div className="mb-12">
+                                                    <h2 className="text-4xl font-bold text-slate-800 dark:text-white tracking-tight mb-4">My Personal Learning Hub</h2>
+                                                    <p className="text-lg text-slate-500 dark:text-zinc-400 font-medium leading-relaxed">Track your Udemy and YouTube playlist progress alongside your study schedules.</p>
+                                                </div>
+                                                <LearningHub />
+                                            </section>
+                                        </motion.div>
+                                    )}
                                 </AnimatePresence>
                             </motion.div>
                         )}
@@ -1451,6 +1854,32 @@ export default function DashboardPage() {
             </div>
 
             <DeepDivePanel pathway={selectedPathway} onClose={() => setSelectedPathway(null)} onPlanClick={handlePlanClick} data={data} />
+
+            {/* Custom Toast Notification Stack */}
+            <div className="fixed bottom-6 right-6 z-[9999] flex flex-col gap-3 max-w-sm w-full pointer-events-none">
+                <AnimatePresence>
+                    {toasts.map((t) => (
+                        <motion.div
+                            key={t.id}
+                            initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: -20, scale: 0.9 }}
+                            className={`pointer-events-auto flex items-center gap-3 p-4 rounded-2xl shadow-xl border text-xs font-bold ${
+                                t.type === 'success'
+                                    ? 'bg-emerald-500/90 dark:bg-emerald-950/90 text-white border-emerald-400/20 backdrop-blur-md'
+                                    : t.type === 'error'
+                                    ? 'bg-rose-500/90 dark:bg-rose-950/90 text-white border-rose-400/20 backdrop-blur-md'
+                                    : 'bg-indigo-500/90 dark:bg-indigo-950/90 text-white border-indigo-400/20 backdrop-blur-md'
+                            }`}
+                        >
+                            <div className="flex-1 leading-snug">{t.message}</div>
+                            <button onClick={() => setToasts(prev => prev.filter(item => item.id !== t.id))} className="text-white/60 hover:text-white shrink-0 cursor-pointer">
+                                <X className="w-4 h-4" />
+                            </button>
+                        </motion.div>
+                    ))}
+                </AnimatePresence>
+            </div>
 
             {/* Sticky Navigation Guard */}
             <div className="h-20" />

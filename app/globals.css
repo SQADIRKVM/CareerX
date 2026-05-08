@@ -82,10 +82,52 @@ html.dark body {
 }
 
 @media print {
-  body { background: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .no-print { display: none !important; }
-  .print-break-inside-avoid { page-break-inside: avoid; break-inside: avoid; }
-  .overflow-y-auto, .overflow-hidden { overflow: visible !important; height: auto !important; max-height: none !important; }
-  .absolute { position: static !important; }
-  .print-hide-graph { display: none !important; }
+  @page {
+    size: A4;
+    margin: 20mm 15mm 20mm 15mm;
+  }
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 11pt;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  header, footer, nav, aside, button, .no-print, [role="tablist"], select, input, form {
+    display: none !important;
+  }
+  .overflow-y-auto, .overflow-hidden, .scroll-smooth {
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+    scroll-behavior: auto !important;
+  }
+  .absolute, .fixed {
+    position: static !important;
+  }
+  main, section, div, p, h1, h2, h3, h4, h5, h6 {
+    color: black !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border-color: #ddd !important;
+  }
+  .print-break-inside-avoid {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+  .print-page-break-before {
+    page-break-before: always !important;
+    break-before: always !important;
+  }
+  .print-card-grid {
+    display: block !important;
+  }
+  .print-card {
+    border: 1px solid #ccc !important;
+    padding: 15px !important;
+    margin-bottom: 20px !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    border-radius: 8px !important;
+  }
 }

@@ -75,3 +75,48 @@ export async function deleteReportAction(reportId: string) {
         return { success: false };
     }
 }
+
+export async function deleteAllUserReportsAction() {
+    const { data: session } = await auth.getSession();
+    if (!session?.user?.id) throw new Error("Unauthorized");
+
+    try {
+        await prisma.report.deleteMany({
+            where: { userId: session.user.id },
+        });
+        return { success: true };
+    } catch (error) {
+        console.error("Prisma Delete All Reports Error:", error);
+        return { success: false };
+    }
+}
+
+export async function updateReportMilestonesAction(reportId: string, completedMilestones: string[]) {
+    const { data: session } = await auth.getSession();
+    if (!session?.user?.id) throw new Error("Unauthorized");
+
+    try {
+        const report = await prisma.report.findFirst({
+            where: { id: reportId, userId: session.user.id },
+        });
+        if (!report) throw new Error("Report not found");
+
+        const updatedData = {
+            ...(report.data as Record<string, any>),
+            completedMilestones,
+        };
+
+        await prisma.report.update({
+            where: { id: reportId, userId: session.user.id },
+            data: {
+                data: updatedData,
+            },
+        });
+
+        return { success: true, updatedData };
+    } catch (error) {
+        console.error("Prisma Update Milestones Error:", error);
+        return { success: false, error: "Failed to update milestones" };
+    }
+}
+

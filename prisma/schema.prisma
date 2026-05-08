@@ -13,3 +13,15 @@ model Report {
   data      Json
   createdAt DateTime @default(now())
 }
+
+model TrackedCourse {
+  id          String   @id @default(cuid())
+  userId      String
+  title       String
+  platform    String   // "youtube" | "udemy" | "coursera" | "other"
+  url         String?
+  progress    Int      @default(0) // 0 to 100
+  notes       String?
+  reminderAt  String?  // e.g., "Tuesdays at 6:00 PM"
+  createdAt   DateTime @default(now())
+}
