@@ -38,7 +38,7 @@ function GlowCard({ children, className = "" }: { children: React.ReactNode, cla
             onBlur={handleBlur}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
-            className={`relative overflow-hidden rounded-[2rem] border border-white/10 bg-zinc-900/40 p-8 md:p-10 transition-colors hover:border-white/20 ${className}`}
+            className={`relative overflow-hidden rounded-[2rem] border border-zinc-200 dark:border-white/10 bg-white dark:bg-zinc-900/40 p-8 md:p-10 transition-colors hover:border-zinc-300 dark:hover:border-white/20 ${className}`}
         >
             <div
                 className="pointer-events-none absolute -inset-px opacity-0 transition duration-300"
@@ -56,15 +56,15 @@ function GlowCard({ children, className = "" }: { children: React.ReactNode, cla
 function FAQItem({ question, answer }: { question: string, answer: string }) {
     const [isOpen, setIsOpen] = useState(false);
     return (
-        <div className="border-b border-white/10 py-6">
+        <div className="border-b border-zinc-200 dark:border-white/10 py-6">
             <button onClick={() => setIsOpen(!isOpen)} className="flex w-full justify-between items-center text-left focus:outline-none group">
-                <h3 className="text-xl font-medium text-white group-hover:text-indigo-400 transition-colors">{question}</h3>
+                <h3 className="text-xl font-medium text-zinc-800 dark:text-white group-hover:text-indigo-500 transition-colors">{question}</h3>
                 <ChevronDown className={`w-5 h-5 text-zinc-500 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
             </button>
             <AnimatePresence>
                 {isOpen && (
                     <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
-                        <p className="pt-4 text-zinc-400 text-lg leading-relaxed">{answer}</p>
+                        <p className="pt-4 text-zinc-600 dark:text-zinc-400 text-lg leading-relaxed">{answer}</p>
                     </motion.div>
                 )}
             </AnimatePresence>
@@ -210,7 +210,7 @@ export default function LandingPage() {
         </motion.section>
 
         {/* Who is this for? */}
-        <section className="py-32 px-6 md:px-12 bg-[#050505] relative z-20 border-t border-white/5">
+        <section className="py-32 px-6 md:px-12 bg-white dark:bg-[#050505] relative z-20 border-t border-zinc-200 dark:border-white/5">
             <div className="max-w-7xl mx-auto">
                 <div className="text-center mb-24">
                     <motion.div 
@@ -221,8 +221,8 @@ export default function LandingPage() {
                     >
                         Audience Profiles
                     </motion.div>
-                    <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-white mb-5">Who is CareerX built for?</h2>
-                    <p className="text-zinc-400 text-lg md:text-xl max-w-2xl mx-auto font-normal leading-relaxed">
+                    <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-zinc-900 dark:text-white mb-5">Who is CareerX built for?</h2>
+                    <p className="text-zinc-600 dark:text-zinc-400 text-lg md:text-xl max-w-2xl mx-auto font-normal leading-relaxed">
                         Whether you are navigating high school, orchestrating a mid-career pivot, or optimizing a resume, we find the real-time data that matters to you.
                     </p>
                 </div>
@@ -261,14 +261,14 @@ export default function LandingPage() {
                             viewport={{ once: true }}
                             transition={{ duration: 0.6, delay: i * 0.15, ease: [0.16, 1, 0.3, 1] }}
                             whileHover={{ y: -8, scale: 1.02 }}
-                            className={`group relative overflow-hidden rounded-[2.5rem] border border-white/5 bg-zinc-900/35 p-10 md:p-12 transition-all duration-500 ${card.borderHover}`}
+                            className={`group relative overflow-hidden rounded-[2.5rem] border border-zinc-200 dark:border-white/5 bg-zinc-50 dark:bg-zinc-900/35 p-10 md:p-12 transition-all duration-500 ${card.borderHover}`}
                         >
-                            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                            <div className={`w-14 h-14 bg-gradient-to-br ${card.bgGradient} rounded-2xl flex items-center justify-center mb-8 border border-white/10 shadow-lg relative z-10`}>
+                            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/5 dark:to-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                            <div className={`w-14 h-14 bg-gradient-to-br ${card.bgGradient} rounded-2xl flex items-center justify-center mb-8 border border-zinc-200 dark:border-white/10 shadow-lg relative z-10`}>
                                 <card.icon className={`w-7 h-7 ${card.colorClass}`} />
                             </div>
-                            <h3 className="text-2xl font-bold text-white mb-4 tracking-tight relative z-10 group-hover:text-zinc-100 transition-colors">{card.title}</h3>
-                            <p className="text-zinc-400 leading-relaxed text-base md:text-lg relative z-10 group-hover:text-zinc-300 transition-colors">{card.desc}</p>
+                            <h3 className="text-2xl font-bold text-zinc-800 dark:text-white mb-4 tracking-tight relative z-10 group-hover:text-zinc-900 dark:group-hover:text-zinc-100 transition-colors">{card.title}</h3>
+                            <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed text-base md:text-lg relative z-10 group-hover:text-zinc-700 dark:group-hover:text-zinc-300 transition-colors">{card.desc}</p>
                         </motion.div>
                     ))}
                 </div>
@@ -276,7 +276,7 @@ export default function LandingPage() {
         </section>
 
         {/* Bento Grid Features */}
-        <section id="features" className="py-32 px-6 md:px-12 relative z-20 bg-[#080808] border-t border-white/5">
+        <section id="features" className="py-32 px-6 md:px-12 relative z-20 bg-zinc-50 dark:bg-[#080808] border-t border-zinc-200 dark:border-white/5">
           <div className="max-w-7xl mx-auto">
             <div className="mb-24 md:w-2/3">
                 <motion.div 
@@ -287,8 +287,8 @@ export default function LandingPage() {
                 >
                     Core Features
                 </motion.div>
-                <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6 text-white leading-tight">Built on real-time data,<br />not generic assumptions.</h2>
-                <p className="text-zinc-400 text-lg md:text-xl leading-relaxed max-w-2xl font-normal">
+                <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6 text-zinc-900 dark:text-white leading-tight">Built on real-time data,<br />not generic assumptions.</h2>
+                <p className="text-zinc-600 dark:text-zinc-400 text-lg md:text-xl leading-relaxed max-w-2xl font-normal">
                     Traditional career guidance relies on stale datasets. CareerX conducts targeted live-web research to pull precise hiring trends, salaries, and real opinions right now.
                 </p>
             </div>
@@ -300,11 +300,11 @@ export default function LandingPage() {
                   <Globe className="w-96 h-96 text-indigo-500" />
                 </div>
                 <div className="relative z-10 max-w-xl mt-auto p-2">
-                  <div className="w-16 h-16 bg-zinc-800/80 rounded-2xl flex items-center justify-center mb-10 border border-white/10 shadow-xl group-hover:border-indigo-500/30 group-hover:shadow-[0_0_30px_rgba(99,102,241,0.2)] transition-all duration-500">
-                    <Search className="w-8 h-8 text-indigo-400" />
+                  <div className="w-16 h-16 bg-zinc-100 dark:bg-zinc-800/80 rounded-2xl flex items-center justify-center mb-10 border border-zinc-200 dark:border-white/10 shadow-xl group-hover:border-indigo-500/30 group-hover:shadow-[0_0_30px_rgba(99,102,241,0.2)] transition-all duration-500">
+                    <Search className="w-8 h-8 text-indigo-500 dark:text-indigo-400" />
                   </div>
-                  <h3 className="text-3xl md:text-4xl font-bold mb-5 tracking-tight text-white">Live Market RAG Research</h3>
-                  <p className="text-zinc-400 leading-relaxed text-base md:text-lg font-normal group-hover:text-zinc-300 transition-colors">
+                  <h3 className="text-3xl md:text-4xl font-bold mb-5 tracking-tight text-zinc-900 dark:text-white">Live Market RAG Research</h3>
+                  <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed text-base md:text-lg font-normal group-hover:text-zinc-700 dark:group-hover:text-zinc-300 transition-colors">
                     When you complete our adaptive questionnaire, our platform instantly launches parallel web queries via SearXNG to scrape actual job boards, corporate listings, and academic databases, synthesizing a highly custom study dashboard.
                   </p>
                 </div>
@@ -312,12 +312,12 @@ export default function LandingPage() {
 
               {/* Actionable Next Steps */}
               <GlowCard className="col-span-1 flex flex-col justify-between group p-10 hover:border-emerald-500/20 hover:shadow-[0_0_80px_rgba(16,185,129,0.08)] transition-all duration-500">
-                <div className="w-14 h-14 bg-zinc-800/80 rounded-2xl flex items-center justify-center mb-8 border border-white/10 shadow-xl group-hover:border-emerald-500/30 group-hover:shadow-[0_0_30px_rgba(16,185,129,0.2)] transition-all duration-500">
-                  <CheckCircle2 className="w-6 h-6 text-emerald-400" />
+                <div className="w-14 h-14 bg-zinc-100 dark:bg-zinc-800/80 rounded-2xl flex items-center justify-center mb-8 border border-zinc-200 dark:border-white/10 shadow-xl group-hover:border-emerald-500/30 group-hover:shadow-[0_0_30px_rgba(16,185,129,0.2)] transition-all duration-500">
+                  <CheckCircle2 className="w-6 h-6 text-emerald-500 dark:text-emerald-400" />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold mb-4 tracking-tight text-white group-hover:text-zinc-100 transition-colors">Actionable Milestones</h3>
-                  <p className="text-zinc-400 leading-relaxed text-base group-hover:text-zinc-300 transition-colors">
+                  <h3 className="text-2xl font-bold mb-4 tracking-tight text-zinc-800 dark:text-white group-hover:text-zinc-900 dark:group-hover:text-zinc-100 transition-colors">Actionable Milestones</h3>
+                  <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed text-base group-hover:text-zinc-700 dark:group-hover:text-zinc-300 transition-colors">
                     We do not deliver static, generic descriptions. You get highly specific upskilling milestones, complete with real recommended courses, certifications, and interactive tracking progress.
                   </p>
                 </div>
@@ -326,34 +326,34 @@ export default function LandingPage() {
               {/* Salary Transparency with Mini Graph */}
               <GlowCard className="col-span-1 flex flex-col justify-between group p-10 hover:border-amber-500/20 hover:shadow-[0_0_80px_rgba(245,158,11,0.08)] transition-all duration-500">
                 <div className="mb-8">
-                  <div className="w-14 h-14 bg-zinc-800/80 rounded-2xl flex items-center justify-center mb-8 border border-white/10 shadow-xl group-hover:border-amber-500/30 group-hover:shadow-[0_0_30px_rgba(245,158,11,0.2)] transition-all duration-500">
-                    <TrendingUp className="w-6 h-6 text-amber-400" />
+                  <div className="w-14 h-14 bg-zinc-100 dark:bg-zinc-800/80 rounded-2xl flex items-center justify-center mb-8 border border-zinc-200 dark:border-white/10 shadow-xl group-hover:border-amber-500/30 group-hover:shadow-[0_0_30px_rgba(245,158,11,0.2)] transition-all duration-500">
+                    <TrendingUp className="w-6 h-6 text-amber-500 dark:text-amber-400" />
                   </div>
                   
                   {/* Dynamic Custom Chart */}
-                  <div className="flex items-end gap-3 h-24 w-full px-4 mb-6 border-b border-white/5 relative">
-                    <div className="absolute left-0 right-0 top-1/2 border-t border-dashed border-white/5 pointer-events-none" />
+                  <div className="flex items-end gap-3 h-24 w-full px-4 mb-6 border-b border-zinc-200 dark:border-white/5 relative">
+                    <div className="absolute left-0 right-0 top-1/2 border-t border-dashed border-zinc-200 dark:border-white/5 pointer-events-none" />
                     <div className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
-                      <div className="w-full bg-zinc-800 rounded-t-md h-[30%] transition-all duration-700 group-hover:h-[40%] group-hover:bg-amber-500/20" />
-                      <span className="text-[10px] font-mono text-zinc-600">Jr</span>
+                      <div className="w-full bg-zinc-200 dark:bg-zinc-800 rounded-t-md h-[30%] transition-all duration-700 group-hover:h-[40%] group-hover:bg-amber-500/20" />
+                      <span className="text-[10px] font-mono text-zinc-500">Jr</span>
                     </div>
                     <div className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
-                      <div className="w-full bg-zinc-800 rounded-t-md h-[55%] transition-all duration-700 group-hover:h-[65%] group-hover:bg-amber-500/40" />
-                      <span className="text-[10px] font-mono text-zinc-600">Mid</span>
+                      <div className="w-full bg-zinc-200 dark:bg-zinc-800 rounded-t-md h-[55%] transition-all duration-700 group-hover:h-[65%] group-hover:bg-amber-500/40" />
+                      <span className="text-[10px] font-mono text-zinc-500">Mid</span>
                     </div>
                     <div className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
-                      <div className="w-full bg-zinc-700 rounded-t-md h-[75%] transition-all duration-700 group-hover:h-[85%] group-hover:bg-amber-500/70" />
+                      <div className="w-full bg-zinc-300 dark:bg-zinc-700 rounded-t-md h-[75%] transition-all duration-700 group-hover:h-[85%] group-hover:bg-amber-500/70" />
                       <span className="text-[10px] font-mono text-zinc-500">Sr</span>
                     </div>
                     <div className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
                       <div className="w-full bg-amber-500 rounded-t-md h-[90%] shadow-[0_0_20px_rgba(245,158,11,0.4)]" />
-                      <span className="text-[10px] font-mono text-amber-400 font-semibold">Exec</span>
+                      <span className="text-[10px] font-mono text-amber-500 dark:text-amber-400 font-semibold">Exec</span>
                     </div>
                   </div>
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold mb-4 tracking-tight text-white">Salary Transparency</h3>
-                  <p className="text-zinc-400 leading-relaxed text-base group-hover:text-zinc-300 transition-colors">
+                  <h3 className="text-2xl font-bold mb-4 tracking-tight text-zinc-800 dark:text-white">Salary Transparency</h3>
+                  <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed text-base group-hover:text-zinc-700 dark:group-hover:text-zinc-300 transition-colors">
                     Access localized, role-specific salary curves generated in real-time based on live hiring requirements, letting you negotiate your true market worth with solid evidence.
                   </p>
                 </div>
@@ -362,11 +362,11 @@ export default function LandingPage() {
               {/* Wide Card: 100% Secure & Private */}
               <GlowCard className="col-span-1 md:col-span-2 flex flex-col md:flex-row items-center gap-12 hover:border-violet-500/20 hover:shadow-[0_0_80px_rgba(139,92,246,0.08)] transition-all duration-500">
                 <div className="flex-1">
-                  <div id="privacy" className="w-14 h-14 bg-zinc-800/80 rounded-2xl flex items-center justify-center mb-8 border border-white/10 shadow-xl group-hover:border-violet-500/30 group-hover:shadow-[0_0_30px_rgba(139,92,246,0.2)] transition-all duration-500">
-                    <Lock className="w-6 h-6 text-violet-400" />
+                  <div id="privacy" className="w-14 h-14 bg-zinc-100 dark:bg-zinc-800/80 rounded-2xl flex items-center justify-center mb-8 border border-zinc-200 dark:border-white/10 shadow-xl group-hover:border-violet-500/30 group-hover:shadow-[0_0_30px_rgba(139,92,246,0.2)] transition-all duration-500">
+                    <Lock className="w-6 h-6 text-violet-500 dark:text-violet-400" />
                   </div>
-                  <h3 className="text-2xl md:text-3xl font-bold mb-4 tracking-tight text-white">100% Private, Safe, & Permanent</h3>
-                  <p className="text-zinc-400 leading-relaxed text-base md:text-lg font-normal group-hover:text-zinc-300 transition-colors">
+                  <h3 className="text-2xl md:text-3xl font-bold mb-4 tracking-tight text-zinc-800 dark:text-white">100% Private, Safe, & Permanent</h3>
+                  <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed text-base md:text-lg font-normal group-hover:text-zinc-700 dark:group-hover:text-zinc-300 transition-colors">
                     Your assessment, upload assets, and personal details remain completely secure. We leverage secure database storage to track and persist only your authorized learning hubs and milestone progress. You remain in complete control.
                   </p>
                 </div>
@@ -384,7 +384,7 @@ export default function LandingPage() {
         </section>
 
         {/* Execution Flow */}
-        <section id="how-it-works" className="py-32 px-6 md:px-12 bg-[#050505] relative border-t border-white/5">
+        <section id="how-it-works" className="py-32 px-6 md:px-12 bg-white dark:bg-[#050505] relative border-t border-zinc-200 dark:border-white/5">
           <div className="max-w-7xl mx-auto">
             <div className="grid lg:grid-cols-2 gap-20 items-center">
               <div>
@@ -396,8 +396,8 @@ export default function LandingPage() {
                 >
                     Workflow
                 </motion.div>
-                <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-14 text-white leading-tight">How CareerX works</h2>
-                <div className="space-y-12 relative before:absolute before:left-5 before:top-4 before:bottom-4 before:w-[2px] before:bg-white/5">
+                <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-14 text-zinc-900 dark:text-white leading-tight">How CareerX works</h2>
+                <div className="space-y-12 relative before:absolute before:left-5 before:top-4 before:bottom-4 before:w-[2px] before:bg-zinc-200 dark:before:bg-white/5">
                   {[
                     { num: '1', title: 'Tell us about yourself', desc: 'Complete a brief, adaptive questionnaire mapping your existing background, preferred location, target budget, and core academic interests.' },
                     { num: '2', title: 'Live Search Aggregation', desc: 'Our platform coordinates parallel web searches, scanning current job boards and university requirements specifically matching your target criteria.' },
@@ -411,12 +411,12 @@ export default function LandingPage() {
                         transition={{ duration: 0.5, delay: i * 0.15 }}
                         className="flex gap-6 group relative"
                     >
-                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-zinc-900 border border-white/10 flex items-center justify-center text-sm font-bold text-zinc-400 group-hover:bg-emerald-500 group-hover:border-emerald-400 group-hover:text-black transition-all duration-500 shadow-md">
+                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 flex items-center justify-center text-sm font-bold text-zinc-500 dark:text-zinc-400 group-hover:bg-emerald-500 group-hover:border-emerald-400 group-hover:text-black transition-all duration-500 shadow-md">
                         {step.num}
                       </div>
                       <div className="pt-1">
-                        <h4 className="text-xl font-bold text-white mb-2 tracking-tight group-hover:text-emerald-400 transition-colors">{step.title}</h4>
-                        <p className="text-zinc-400 leading-relaxed text-base md:text-lg font-normal">{step.desc}</p>
+                        <h4 className="text-xl font-bold text-zinc-800 dark:text-white mb-2 tracking-tight group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition-colors">{step.title}</h4>
+                        <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed text-base md:text-lg font-normal">{step.desc}</p>
                       </div>
                     </motion.div>
                   ))}
@@ -476,7 +476,7 @@ export default function LandingPage() {
         </section>
 
         {/* Traditional vs CareerX */}
-        <section className="py-24 px-6 md:px-12 bg-[#080808] relative border-t border-white/5">
+        <section className="py-24 px-6 md:px-12 bg-zinc-50 dark:bg-[#080808] relative border-t border-zinc-200 dark:border-white/5">
             <div className="max-w-7xl mx-auto">
                 <div className="text-center mb-20">
                     <motion.div 
@@ -487,8 +487,8 @@ export default function LandingPage() {
                     >
                         Comparison
                     </motion.div>
-                    <h2 className="text-4xl font-bold tracking-tight text-white mb-4">Why we built CareerX</h2>
-                    <p className="text-zinc-400 text-lg md:text-xl max-w-2xl mx-auto font-normal leading-relaxed">
+                    <h2 className="text-4xl font-bold tracking-tight text-zinc-900 dark:text-white mb-4">Why we built CareerX</h2>
+                    <p className="text-zinc-600 dark:text-zinc-400 text-lg md:text-xl max-w-2xl mx-auto font-normal leading-relaxed">
                         Conventional career platforms rely on historical indices that completely ignore modern workplace adjustments.
                     </p>
                 </div>
@@ -499,14 +499,14 @@ export default function LandingPage() {
                         initial={{ opacity: 0, x: -30 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
-                        className="p-10 md:p-12 bg-zinc-950/40 border border-red-500/10 rounded-[2.5rem] relative overflow-hidden group hover:border-red-500/25 transition-all duration-500 shadow-xl"
+                        className="p-10 md:p-12 bg-white dark:bg-zinc-950/40 border border-red-500/20 rounded-[2.5rem] relative overflow-hidden group hover:border-red-500/25 transition-all duration-500 shadow-xl"
                     >
                         <div className="absolute top-0 right-0 w-48 h-48 bg-rose-500/[0.01] rounded-full blur-[80px]" />
                         <h3 className="text-2xl font-bold text-rose-500 mb-8 tracking-tight flex items-center gap-3.5">
                             <span className="w-8 h-8 rounded-full bg-rose-500/10 flex items-center justify-center text-rose-400 text-sm border border-rose-500/20">✕</span> 
                             Traditional Advice
                         </h3>
-                        <ul className="space-y-6 text-zinc-400 text-base md:text-lg font-normal">
+                        <ul className="space-y-6 text-zinc-600 dark:text-zinc-400 text-base md:text-lg font-normal">
                           {[
                             "Relying on years-old static surveys and generic government statistics.",
                             "Pushing broad, non-specific general college degrees without financial analysis.",
@@ -526,14 +526,14 @@ export default function LandingPage() {
                         initial={{ opacity: 0, x: 30 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
-                        className="p-10 md:p-12 bg-indigo-950/15 border border-emerald-500/10 rounded-[2.5rem] relative overflow-hidden group hover:border-emerald-500/25 transition-all duration-500 shadow-xl"
+                        className="p-10 md:p-12 bg-white dark:bg-indigo-950/15 border border-emerald-500/20 rounded-[2.5rem] relative overflow-hidden group hover:border-emerald-500/25 transition-all duration-500 shadow-xl"
                     >
                         <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/[0.03] rounded-full blur-[90px]" />
                         <h3 className="text-2xl font-bold text-emerald-400 mb-8 tracking-tight flex items-center gap-3.5">
                             <span className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400 text-sm border border-emerald-500/20">✓</span> 
                             The CareerX Approach
                         </h3>
-                        <ul className="space-y-6 text-zinc-300 text-base md:text-lg font-normal">
+                        <ul className="space-y-6 text-zinc-600 dark:text-zinc-300 text-base md:text-lg font-normal">
                           {[
                             "Live-scraping real-time job boards for high-fidelity salary insights.",
                             "Directly correlating user interests with economically expanding markets.",
@@ -552,7 +552,7 @@ export default function LandingPage() {
         </section>
 
         {/* FAQ */}
-        <section id="faq" className="py-32 px-6 md:px-12 bg-[#050505] relative border-t border-white/5">
+        <section id="faq" className="py-32 px-6 md:px-12 bg-white dark:bg-[#050505] relative border-t border-zinc-200 dark:border-white/5">
             <div className="max-w-4xl mx-auto">
                 <div className="text-center mb-20">
                     <motion.div 
@@ -563,12 +563,12 @@ export default function LandingPage() {
                     >
                         FAQ
                     </motion.div>
-                    <h2 className="text-4xl font-bold tracking-tight text-white mb-4">Frequently Asked Questions</h2>
-                    <p className="text-zinc-400 text-lg max-w-xl mx-auto font-normal">
+                    <h2 className="text-4xl font-bold tracking-tight text-zinc-900 dark:text-white mb-4">Frequently Asked Questions</h2>
+                    <p className="text-zinc-600 dark:text-zinc-400 text-lg max-w-xl mx-auto font-normal">
                         Have some questions about our operations? We have answered the most common ones.
                     </p>
                 </div>
-                <div className="border-t border-white/10 max-w-3xl mx-auto bg-zinc-950/20 p-8 md:p-12 rounded-[2.5rem] border border-white/5">
+                <div className="border-t border-zinc-200 dark:border-white/10 max-w-3xl mx-auto bg-zinc-50 dark:bg-zinc-950/20 p-8 md:p-12 rounded-[2.5rem] border border-zinc-200 dark:border-white/5">
                     <FAQItem 
                         question="Is it completely free to use?" 
                         answer="Yes. There are no paywalls, locked features, subscriptions, or hidden costs. CareerX is fully designed to deliver open, data-driven academic and professional path assistance."
@@ -598,13 +598,13 @@ export default function LandingPage() {
         </section>
 
         {/* CTA */}
-        <section className="py-44 px-6 md:px-12 relative overflow-hidden flex justify-center border-t border-white/5 bg-[#080808]">
+        <section className="py-44 px-6 md:px-12 relative overflow-hidden flex justify-center border-t border-zinc-200 dark:border-white/5 bg-zinc-50 dark:bg-[#080808]">
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-indigo-950/20 pointer-events-none" />
           <div className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-indigo-500/5 rounded-full blur-[140px] pointer-events-none" />
           
           <div className="max-w-4xl text-center relative z-10">
-            <h2 className="text-5xl md:text-7xl lg:text-8xl font-black mb-8 tracking-tighter text-white leading-tight">Find your direction.</h2>
-            <p className="text-zinc-400 text-lg md:text-2xl max-w-3xl mx-auto mb-14 font-normal leading-relaxed tracking-tight">
+            <h2 className="text-5xl md:text-7xl lg:text-8xl font-black mb-8 tracking-tighter text-zinc-900 dark:text-white leading-tight">Find your direction.</h2>
+            <p className="text-zinc-600 dark:text-zinc-400 text-lg md:text-2xl max-w-3xl mx-auto mb-14 font-normal leading-relaxed tracking-tight">
               Stop guessing. Access a structured, step-by-step career path based exactly on what the real-world job market demands today.
             </p>
             <motion.div
@@ -613,7 +613,7 @@ export default function LandingPage() {
               className="inline-block"
             >
               <Link href="/onboarding">
-                <Button className="h-16 px-12 rounded-full font-bold text-lg bg-white text-black hover:bg-zinc-100 transition-all flex items-center justify-center gap-3.5 mx-auto shadow-[0_0_50px_rgba(255,255,255,0.18)] hover:shadow-[0_0_80px_rgba(255,255,255,0.35)] group cursor-pointer">
+                <Button className="h-16 px-12 rounded-full font-bold text-lg bg-zinc-900 dark:bg-white text-white dark:text-black hover:bg-zinc-800 dark:hover:bg-zinc-100 transition-all flex items-center justify-center gap-3.5 mx-auto shadow-[0_4px_20px_rgba(0,0,0,0.1)] dark:shadow-[0_0_50px_rgba(255,255,255,0.18)] group cursor-pointer">
                   Start Your Assessment
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1.5 transition-transform" />
                 </Button>
@@ -623,16 +623,16 @@ export default function LandingPage() {
         </section>
 
         {/* Minimal Footer */}
-        <footer className="py-12 px-6 md:px-12 border-t border-white/5 bg-black">
+        <footer className="py-12 px-6 md:px-12 border-t border-zinc-200 dark:border-white/5 bg-zinc-100 dark:bg-black">
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex items-center gap-3">
-              <Compass className="w-5 h-5 text-zinc-600" />
-              <span className="text-sm font-medium text-zinc-600">CareerX</span>
+              <Compass className="w-5 h-5 text-zinc-500 dark:text-zinc-600" />
+              <span className="text-sm font-medium text-zinc-500 dark:text-zinc-600">CareerX</span>
             </div>
-            <div className="flex gap-8 text-sm font-medium text-zinc-600">
-              <a href="#" className="hover:text-white transition-colors">Documentation</a>
-              <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-              <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
+            <div className="flex gap-8 text-sm font-medium text-zinc-500 dark:text-zinc-600">
+              <a href="#" className="hover:text-zinc-900 dark:hover:text-white transition-colors">Documentation</a>
+              <a href="#" className="hover:text-zinc-900 dark:hover:text-white transition-colors">Privacy Policy</a>
+              <a href="#" className="hover:text-zinc-900 dark:hover:text-white transition-colors">Terms of Service</a>
             </div>
           </div>
         </footer>
